@@ -1,5 +1,5 @@
 
-<?php
+<a?php
 
 require_once 'db.php'; 
 session_start();
@@ -125,25 +125,75 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
     $service->deleteBook(id: $_GET['delete']);
   }
 
-
   $editBook = null; 
   if(isset($_GET['edit']))
   {
     $editBook = $service-> getBook($_GET['edit']);
 
   }
-
   $books = $service->listBooks(); 
 }
 ?>
 
 <!DOCTYPE html>
 <html>
-<head><title>Dashboard</title></head>
+<head><title> Book Dashboard</title></head>
 <body>
-  <h2>Welcome, <?php echo htmlspecialchars($_SESSION['user']); ?>!</h2>
-  <p>This is a protected page.</p>
+  <nav>
+    <h2>Welcome, <?php echo htmlspecialchars($_SESSION['user']); ?>!</h2>
   <a href="logout.php">Logout</a>
+  </nav>
+  <style>
+    body {font-family: Arial, Helvetica, sans-serif; padding: 20px}
+    table{width: 100%; border-collapse: collapse; magin-top :20px}
+    th, td {border: 1px solid #aaa; padding: 10px; width: 200px}
+    input[type="text"] {padding:5px; width:200px}
+    input[type="submit"] {padding: 7px 15px;}
+  </style>
+  
+  
 </body>
+
+<h2><?= $editBook?"Edit Book":"Add new book" ?></h2>
+<form method="post">
+  <input type="hidden" name="id" value="<?= $editBook['id'] ?? ''?>">
+  <label for="title">Title:</label>
+  <input type="text" name="title" required  value = "<?= $editBook['title'] ?? ''?>">
+  <br><br>
+  <label for="Author">Author:</label>
+  <input type="text" name="author" required id="author" value="<?= $editBook['author'] ?? ''?>">
+  <br><br>
+
+  <input type="submit" name="<?= $editBook?'update':'create'?>" value="<?= $editBook?'update':'create'?>">
+  
+
+
+  //display
+  <h2>Book List</h2>
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Title</th>
+      <th>Author</th>
+      <th>Actions</th>
+    </tr>
+    <?php foreach ($books as $book):  ?>
+    <tr>
+      <td> <?= $book['id'] ?></td>
+      <td> <?= htmlspecialchars($book['title'])?></td>
+      <td> <?= htmlspecialchars($book['author'])?></td>
+      <td>
+        <a href="?edit =<?= $book['id'] ?>">Edit</a>
+        <a href="?delete = <?= $book['id']?> " onclick="return confirm('Delete this book')">Delete</a>
+      </td>
+    </tr>
+    <br>
+    <?php endforeach; ?> 
+
+    
+  
+  </table>
+
+</form>
 </html>
 
